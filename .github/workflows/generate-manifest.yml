@@ -1,0 +1,40 @@
+name: Build media manifest
+
+on:
+  push:
+    paths:
+      - 'meta/**'
+      - 'scripts/generate-manifest.js'
+      - '.github/workflows/generate-manifest.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Run generator
+        run: node scripts/generate-manifest.js
+
+      - name: Commit manifest if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/media.json || true
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update media manifest [skip ci]" || true
+            git push origin HEAD
+          else
+            echo "No changes to commit"
+          fi
