@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Watch</title>
+  <style>
+    body{font-family:Inter,system-ui,Arial;margin:0;background:#0b0b0b;color:#fff;padding:18px}
+    .player{max-width:900px;margin:0 auto}
+    video{width:100%;height:auto;background:#000;border-radius:12px}
+    .meta{margin-top:12px}
+    a.back{display:inline-block;margin-bottom:12px;color:#ff6b8a;text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="player">
+    <a class="back" href="index.html">← Back to gallery</a>
+    <div id="container">
+      <p>Loading...</p>
+    </div>
+  </div>
+
+<script>
+  function qs(name){ return new URL(location.href).searchParams.get(name); }
+  function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  async function load(){
+    const id = qs('id');
+    if(!id) return document.getElementById('container').innerText = 'Missing id';
+    let res;
+    try {
+      res = await fetch('media.json', {cache:'no-cache'});
+    } catch(e) { document.getElementById('container').innerText = 'Failed to load manifest'; return; }
+    if(!res.ok) return document.getElementById('container').innerText = 'Failed to load manifest';
+    const items = await res.json();
+    const item = items.find(i=>String(i.id) === String(id));
+    if(!item) return document.getElementById('container').innerText = 'Item not found';
+
+    const container = document.getElementById('container');
+    if(item.type === 'video'){
+      container.innerHTML = `
+        <video controls playsinline preload="metadata" poster="${escapeHtml(item.thumb || '')}">
+          <source src="${escapeHtml(item.src)}" type="video/mp4">
+          Your browser does not support video.
+        </video>
+        <div class="meta">
+          <h2>${escapeHtml(item.title)}</h2>
+          <p>${escapeHtml(item.description || '')}</p>
+          <p><strong>Tags:</strong> ${escapeHtml((item.tags||[]).join(', '))}</p>
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.title)}" style="width:100%;border-radius:12px"/>
+        <div class="meta">
+          <h2>${escapeHtml(item.title)}</h2>
+          <p>${escapeHtml(item.description || '')}</p>
+          <p><strong>Tags:</strong> ${escapeHtml((item.tags||[]).join(', '))}</p>
+        </div>
+      `;
+    }
+  }
+  load();
+</script>
+</body>
+</html>

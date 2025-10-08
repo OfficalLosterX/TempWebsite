@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Losters Leaks</title>
+  <link rel="icon" href="media/icon.webp" type="image/webp" />
+  <meta name="description" content="Dark purple/red gradient media gallery for videos & photos — responsive, accessible, keyboard-friendly." />
+  <style>
+    /* ========== Variables ========== */
+    :root{
+      --bg-1: #230423; /* deep purple */
+      --bg-2: #3b0710; /* dark red */
+      --card-bg: rgba(255,255,255,0.03);
+      --glass: rgba(255,255,255,0.04);
+      --accent: #ff6b8a;
+      --muted: rgba(255,255,255,0.6);
+      --radius: 14px;
+      --gap: 18px;
+      --max-width: 1200px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    /* ========== Page ========== */
+    html,body{height:100%;}
+    body{
+      margin:0;
+      min-height:100%;
+      background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      color: #fff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:40px 20px;
+    }
+
+    .app{
+      width:100%;
+      max-width:var(--max-width);
+      margin:0 auto;
+      backdrop-filter: blur(6px);
+    }
+
+    /* ========== Header ========== */
+    header{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      margin-bottom:22px;
+    }
+
+    .logo{
+      width:64px;
+      height:64px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:12px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6), inset 0 -4px 12px rgba(0,0,0,0.4);
+      flex:0 0 64px;
+    }
+
+    .logo img{display:block; width:52px; height:52px; object-fit:contain;}
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      line-height:1;
+    }
+    .brand h1{margin:0;font-size:18px;letter-spacing:0.6px}
+    .brand p{margin:0;color:var(--muted);font-size:13px}
+
+    /* ========== Controls ========== */
+    .controls{
+      margin-left:auto;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .search{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:var(--glass);
+      padding:8px 10px;
+      border-radius:10px;
+      min-width:220px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.6);
+    }
+    .search input{
+      border:0;background:transparent;color:inherit;outline:none;font-size:14px;width:150px
+    }
+
+    .segmented{display:flex;background:transparent;border-radius:12px;padding:4px;gap:4px}
+    .segmented button{
+      background:transparent;border:0;color:var(--muted);padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600;outline:none
+    }
+    .segmented button.active{background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));color:#fff}
+
+    /* ========== Grid ========== */
+    main{display:block}
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap:var(--gap);
+      margin-top:20px;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--radius);
+      overflow:hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.55);
+      transition:transform .22s ease, box-shadow .22s ease;
+      position:relative;
+      cursor:pointer;
+      display:flex;flex-direction:column;
+      min-height:120px;
+      text-decoration:none;color:inherit;
+    }
+    .card:focus{outline:3px solid rgba(255,107,138,0.12)}
+    .card:hover{transform:translateY(-6px);box-shadow: 0 18px 40px rgba(0,0,0,0.6)}
+
+    .thumb{
+      position:relative;
+      height:0;padding-bottom:56.25%; /* 16:9 */
+      background:linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.6));
+    }
+    .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+    .play-overlay{
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none
+    }
+    .play-button{
+      width:62px;height:62px;background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(0,0,0,0.6);pointer-events:auto
+    }
+    .meta{padding:12px 14px;font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+    .meta .title{color:#fff;font-weight:700;font-size:14px}
+
+    /* tag */
+    .tag{font-size:12px;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.03);display:inline-block}
+
+    /* ========== Empty state ========== */
+    .empty{padding:48px;border-radius:14px;background:rgba(255,255,255,0.02);text-align:center;color:var(--muted)}
+
+    /* responsive tweaks */
+    @media (max-width:640px){
+      .logo{width:52px;height:52px}
+      .brand h1{font-size:16px}
+      .controls{gap:8px}
+      .search{min-width:140px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app" role="application">
+    <header>
+      <div class="logo">
+        <img src="media/Icon.webp" alt="Site Logo" />
+      </div>
+
+      <div class="brand">
+        <h1>Losters Leaks</h1>
+        <p>Watch videos • View pictures</p>
+      </div>
+
+      <div class="controls" role="region" aria-label="controls">
+        <div class="search" title="Search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <input id="q" placeholder="Search titles, tags..." aria-label="Search media" />
+        </div>
+
+        <div class="segmented" role="tablist" aria-label="Media type">
+          <button class="seg-btn active" data-type="all" role="tab" aria-selected="true">All</button>
+          <button class="seg-btn" data-type="video" role="tab" aria-selected="false">Videos</button>
+          <button class="seg-btn" data-type="image" role="tab" aria-selected="false">Photos</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="gallery" class="grid" aria-live="polite"></section>
+      <div id="empty" class="empty" style="display:none">No results — try a different search or clear filters.</div>
+    </main>
+  </div>
+
+  <script>
+    // small HTML escape
+    function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, (c)=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+
+    // fetch manifest
+    async function loadManifest() {
+      try {
+        const res = await fetch('media.json', { cache: 'no-cache' });
+        if (!res.ok) throw new Error('failed to load manifest');
+        return await res.json();
+      } catch (err) {
+        console.error(err);
+        return [];
+      }
+    }
+
+    let MEDIA = [];
+    const gallery = document.getElementById('gallery');
+    const empty = document.getElementById('empty');
+    const q = document.getElementById('q');
+    const tabs = Array.from(document.querySelectorAll('.seg-btn'));
+    let state = {type:'all',query:''};
+
+    function render() {
+      const filtered = MEDIA.filter(m => {
+        if(state.type !== 'all' && m.type !== state.type) return false;
+        if(!state.query) return true;
+        const ql = state.query.toLowerCase();
+        return (m.title||'').toLowerCase().includes(ql) || (m.tags||[]).some(t=>t.toLowerCase().includes(ql));
+      });
+
+      gallery.innerHTML = '';
+      if(filtered.length === 0){ empty.style.display='block'; gallery.setAttribute('aria-hidden','true'); return; }
+      empty.style.display='none'; gallery.removeAttribute('aria-hidden');
+
+      filtered.forEach(item => {
+        const a = document.createElement('a');
+        a.className='card';
+        a.href = `watch.html?id=${encodeURIComponent(item.id)}`;
+        a.setAttribute('title', item.title);
+
+        const thumb = document.createElement('div'); thumb.className='thumb';
+        const img = document.createElement('img');
+        img.src = item.thumb || 'media/thumbs/placeholder.webp';
+        img.alt = item.title + ' — thumbnail';
+        thumb.appendChild(img);
+
+        if(item.type === 'video'){
+          const overlay = document.createElement('div'); overlay.className='play-overlay';
+          overlay.innerHTML = `<div class="play-button" aria-hidden="true"><svg width=24 height=24 viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 3v18l15-9L5 3z" fill="white" opacity="0.92"/></svg></div>`;
+          thumb.appendChild(overlay);
+        }
+
+        const meta = document.createElement('div'); meta.className='meta';
+        meta.innerHTML = `<div class="title">${escapeHtml(item.title)}</div><div class="tag">${escapeHtml((item.tags||[]).slice(0,3).join(', '))}</div>`;
+
+        a.appendChild(thumb);
+        a.appendChild(meta);
+        gallery.appendChild(a);
+      });
+    }
+
+    // hooks
+    tabs.forEach(btn=>btn.addEventListener('click', ()=>{
+      tabs.forEach(b=>{b.classList.remove('active'); b.setAttribute('aria-selected','false')});
+      btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+      state.type = btn.dataset.type;
+      render();
+    }));
+
+    q.addEventListener('input', (e)=>{ state.query = e.target.value.trim(); render(); });
+
+    (async ()=>{
+      MEDIA = await loadManifest();
+      render();
+    })();
+  </script>
+</body>
+</html>
